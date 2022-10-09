@@ -1,0 +1,588 @@
+openapi: 3.0.3
+info:
+  title: Blog API
+  description: |-
+    This is a blog API Server with golang with following features.
+    Blog API should have 4 models Posts,Comment,Tags,Authors.
+  termsOfService: http://
+  contact:
+    email: prathameshj680@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Blog API
+  url: http://
+servers:
+  - url: https://localhost:8080/api/v1
+tags:
+  - name: posts
+    description: Everything about your Posts
+  - name: comments
+    description: Access to Comments in blog.
+  - name: tags
+    description: Acess to Tags in blog.
+  - name: author
+    description: See the author of blog.
+paths:
+  /posts:
+    put:
+      tags:
+        - posts
+      summary: Update an existing blog title,content based on Post ID.
+      description: Update an existing blog title,content based on Post ID.
+      operationId: UpdatePosts
+      requestBody:
+        description: Update an existent blog title,content based on Post ID.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posts'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posts'
+              examples:
+                http://localhost:8080/api/v1/posts/2:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '404':
+          description: No Record found
+    post:
+      tags:
+        - posts
+      summary: Add a new posts to blog.
+      description: Add a new posts to blog.
+      operationId: AddPosts
+      requestBody:
+        description: Create a new posts in blog.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posts'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posts'
+              examples:
+                http://localhost:8080/api/v1/posts:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+  /posts/:
+    get:
+      tags:
+        - posts
+      summary: Show all blog post's.
+      description: >-
+        Display all the blog posts with author name,title,content,published
+        date.
+      operationId: GetPosts
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/posts'
+              examples:
+                http://localhost:8080/api/v1/posts:
+                  value: |-
+                    {
+                        "data": [
+                            {
+                                "post_id": 1,
+                                "author_name": "Prathamesh Jadhav",
+                                "title": "dummy text updated ",
+                                "content": "Pune tithe kai une Pune is best.Pune city having most colleges and schools in India.",
+                                "created_at": "2022-10-07T00:00:00Z"
+                            },
+                            {
+                                "post_id": 2,
+                                "author_name": "Prathamesh Jadhav",
+                                "title": "India is city of culture 2022 ",
+                                "content": "Pune tithe kai une Pune is best.Pune city having most colleges and schools in India.",
+                                "created_at": "2022-10-07T00:00:00Z"
+                            }
+                        ]
+                    }
+        '400':
+          description: No record found.
+  /posts/{postID}:
+    get:
+      tags:
+        - posts
+      summary: Find posts by ID
+      description: Returns a single posts
+      operationId: getPetById
+      parameters:
+        - name: postID
+          in: path
+          description: ID of posts to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posts'
+              examples:
+                http://localhost:8080/api/v1/posts/1:
+                  value: |-
+                    {
+                        "data": {
+                            "post_id": 1,
+                            "author_name": "Prathamesh Jadhav",
+                            "title": "dummy text updated ",
+                            "content": "Pune tithe kai une Pune is best.Pune city having most colleges and schools in India.",
+                            "created_at": "2022-10-07T00:00:00Z"
+                        }
+                    }
+        '404':
+          description: Posts not found
+    delete:
+      tags:
+        - posts
+      summary: Deletes a posts
+      description: Delete a posts from the blog based on post id.
+      operationId: DeletePost
+      parameters:
+        - name: postID
+          in: path
+          description: Posts id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tags'
+              examples:
+                http://localhost:8080/api/v1/posts:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '400':
+          description: Invalid post id value
+  /comments/:
+    put:
+      tags:
+        - comments
+      summary: Update an existing comment data.
+      description: Update an existing comment data.
+      operationId: UpdateComment
+      requestBody:
+        description: Update an comment data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comments'
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comments'
+              examples:
+                http://localhost:8080/api/v1/comments:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '404':
+          description: No Record found
+      security:
+        - posts:
+            - write:pets
+            - read:pets
+    post:
+      tags:
+        - comments
+      summary: Add a new comment on post.
+      description: Add a new comment on post id supplied through json.
+      operationId: AddComment
+      requestBody:
+        description: Create a new comment
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comments'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comments'
+              examples:
+                http://localhost:8080/api/v1/comments:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '404':
+          description: No record found.
+  /comments:
+    get:
+      tags:
+        - comments
+      summary: Show all comment's.
+      description: Display all comments with commend id,post id,comment data.
+      operationId: GetCommentById
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comments'
+              examples:
+                http://localhost:8080/api/v1/comments:
+                  value: |-
+                    {
+                        "data": [
+                            {
+                                "c_id": 1,
+                                "post_id": 1,
+                                "comment_data": "IT Industry Latest Comment 3 Oct 2022"
+                            },
+                            {
+                                "c_id": 2,
+                                "post_id": 2,
+                                "comment_data": "Excellent article"
+                            }
+                        ]
+                    }
+        '400':
+          description: No record found.
+  /comments/{c_id}:
+    get:
+      tags:
+        - comments
+      summary: Find comment by ID
+      description: Returns a single comment based on id.
+      operationId: GetComments
+      parameters:
+        - name: c_id
+          in: path
+          description: ID of comment to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comments'
+              examples:
+                http://localhost:8080/api/v1/comments/1:
+                  value: |-
+                    {
+                        "data": {
+                            "c_id": 1,
+                            "post_id": 1,
+                            "comment_data": "IT Industry Latest Comment 3 Oct 2022"
+                        }
+                    }
+        '404':
+          description: No Record Found.
+    delete:
+      tags:
+        - comments
+      summary: Deletes a comments
+      description: Delete a comments
+      operationId: DeleteComment
+      parameters:
+        - name: c_id
+          in: path
+          description: Comment id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '404':
+          description: No record found.
+  /tags:
+    put:
+      tags:
+        - tags
+      summary: Update an existing tag data.
+      description: Update an existing tag data.
+      operationId: UpdateTag
+      requestBody:
+        description: Update an existent tag data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/tags'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tags'
+              examples:
+                http://localhost:8080/api/v1/tags/3:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '404':
+          description: No Record found
+    post:
+      tags:
+        - tags
+      summary: Add a new tag
+      description: Add a new tag data with specific post id.
+      operationId: AddTag
+      requestBody:
+        description: Create a new tag
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/tags'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tags'
+              examples:
+                http://localhost:8080/api/v1/tags:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '405':
+          description: Invalid input
+  /tags/:
+    get:
+      tags:
+        - tags
+      summary: Show all tag's data.
+      description: Display all the tag's id,post id and tag data.
+      operationId: tagId
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tags'
+              examples:
+                http://localhost:8080/api/v1/tags:
+                  value: |-
+                    {
+                        "data": [
+                            {
+                                "t_id": 1,
+                                "post_id": 1,
+                                "tag_data": "#Technology #Java #python #Golang API"
+                            },
+                            {
+                                "t_id": 2,
+                                "post_id": 2,
+                                "tag_data": "#economy #finance #sip #rupay"
+                            }
+                        ]
+                    }
+        '400':
+          description: No record found.
+  /tags/{t_id}:
+    get:
+      tags:
+        - tags
+      summary: Find tag by ID
+      description: Returns a tag data.
+      operationId: GetTagById
+      parameters:
+        - name: t_id
+          in: path
+          description: ID of tag to return.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tags'
+              examples:
+                https://localhost:8080/api/v1/tags/2:
+                  value: |-
+                    {
+                        "data": {
+                            "t_id": 2,
+                            "post_id": 2,
+                            "tag_data": "#economy #finance #sip #rupay"
+                        }
+                    }
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/tags'
+        '404':
+          description: No Record Found.
+    delete:
+      tags:
+        - tags
+      summary: Deletes a tags
+      description: delete a tags
+      operationId: DeleteTag
+      parameters:
+        - name: t_id
+          in: path
+          description: Tag ID to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/tags'
+              examples:
+                Delete a Tag based on "t_id" i.e Tag ID:
+                  value: |-
+                    {
+                        "message": "Success"
+                    }
+        '400':
+          description: Invalid Tag Id value
+  /author/:
+    get:
+      tags:
+        - author
+      summary: Show all blog post's.
+      description: >-
+        display all the blog posts with author name,title,content,published
+        date.
+      operationId: getAuthor
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/posts'
+              examples:
+                Author Name:
+                  value: |-
+                    {
+                        "data": [
+                            {
+                                "author_name": "Prathamesh Jadhav"
+                            },
+                            {
+                                "author_name": "Prathamesh Jadhav"
+                            }
+                        ]
+                    }
+        '400':
+          description: No record found.
+components:
+  schemas:
+    posts:
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 10
+        author_name:
+          type: string
+          example: Prathamesh Jadhav
+        title:
+          type: string
+          example: Current IT trends in 2022
+        content:
+          type: string
+          example: IT field are currently in boom.
+        created_at:
+          type: string
+          format: date-time
+    comments:
+      type: object
+      properties:
+        c_id:
+          type: integer
+          format: int64
+          example: 1
+        post_id:
+          $ref: '#/components/schemas/posts'
+        comment_data:
+          type: string
+          example: Excellent article
+    tags:
+      type: object
+      properties:
+        t_id:
+          type: integer
+          format: int64
+          example: 1
+        post_id:
+          $ref: '#/components/schemas/posts'
+        tag_data:
+          type: string
+          example: rbi,economy
+  
+    
+  securitySchemes:
+    posts:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://localhost:8080/api/v1/
+          scopes:
+            write:posts: modify posts in your blog.
+            read:posts: read your posts of the blog.
+
